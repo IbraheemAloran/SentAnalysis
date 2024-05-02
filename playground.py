@@ -5,6 +5,33 @@ from nltk.corpus import stopwords, state_union, abc, movie_reviews, wordnet
 from nltk.stem import PorterStemmer, WordNetLemmatizer
 import random
 import pickle
+from nltk.classify.scikitlearn import SklearnClassifier
+from sklearn.naive_bayes import MultinomialNB, GaussianNB, BernoulliNB
+from sklearn.linear_model import LogisticRegression, SGDClassifier
+from sklearn.svm import SVC, LinearSVC, NuSVC
+from nltk.classify import ClassifierI
+from statistics import mode
+
+class VoteClassifier(ClassifierI):
+    def __init__(self, *classifiers):
+        self._classifiers = classifiers
+
+    def classify(self, features):
+        votes = []
+        for c in self._classifiers:
+            v = c.classify(features)
+            votes.append(v)
+            return mode(votes)
+
+    def confidence(self, features):
+        votes = []
+        for c in self._classifiers:
+            v = c.classify(features)
+            votes.append(v)
+
+        choice = votes.count(mode(votes))
+        conf = choice / len(votes)
+        return conf
 
 
 ####TEXT CLASSIFICATION
@@ -55,8 +82,62 @@ model.close()
 
 
 
-print("Naive Bayes Accuracy: ", (nltk.classify.accuracy(classifier, test)))
+print("NLTK Naive Bayes Accuracy: ", (nltk.classify.accuracy(classifier, test)))
 classifier.show_most_informative_features(10)
+
+##SKLEARN CLASSIFIERS
+mnb = SklearnClassifier(MultinomialNB())
+gnb = SklearnClassifier(GaussianNB())
+bnb = SklearnClassifier(BernoulliNB())
+lr = SklearnClassifier(LogisticRegression())
+sgd = SklearnClassifier(SGDClassifier())
+svc = SklearnClassifier(SVC())
+linsvc = SklearnClassifier(LinearSVC())
+nusvc = SklearnClassifier(NuSVC())
+
+
+
+
+
+###Train sklearn classifiers
+mnb.train(train)
+#gnb.train(train)
+bnb.train(train)
+lr.train(train)
+sgd.train(train)
+svc.train(train)
+linsvc.train(train)
+nusvc.train(train)
+
+
+###VOTE CLASSIFIER
+voter = VoteClassifier(mnb,bnb,lr,sgd,svc,linsvc,nusvc)
+
+
+###print accuracies for each model
+print("Multinomial Naive Bayes Accuracy: ", (nltk.classify.accuracy(mnb, test)))
+#print("Gaussian Naive Bayes Accuracy: ", (nltk.classify.accuracy(gnb, test)))
+print("Bernoulli Naive Bayes Accuracy: ", (nltk.classify.accuracy(bnb, test)))
+print("Linear Regression Accuracy: ", (nltk.classify.accuracy(lr, test)))
+print("SGD Accuracy: ", (nltk.classify.accuracy(sgd, test)))
+print("SVC Accuracy: ", (nltk.classify.accuracy(svc, test)))
+print("Linear SVC Accuracy: ", (nltk.classify.accuracy(linsvc, test)))
+print("NuSVC Accuracy: ", (nltk.classify.accuracy(nusvc, test)))
+
+
+print("Voter Accuracy: ", (nltk.classify.accuracy(voter, test)))
+print("Classification: ", voter.classify(test[0][0]), "Confidence: ", voter.confidence(test[0][0]))
+print("Classification: ", voter.classify(test[1][0]), "Confidence: ", voter.confidence(test[1][0]))
+print("Classification: ", voter.classify(test[2][0]), "Confidence: ", voter.confidence(test[2][0]))
+print("Classification: ", voter.classify(test[3][0]), "Confidence: ", voter.confidence(test[3][0]))
+print("Classification: ", voter.classify(test[5][0]), "Confidence: ", voter.confidence(test[5][0]))
+print("Classification: ", voter.classify(test[20][0]), "Confidence: ", voter.confidence(test[20][0]))
+
+
+
+
+
+
 
 
 # model = open("naivebayes.pickle", "wb")
