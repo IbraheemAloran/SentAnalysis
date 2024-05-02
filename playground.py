@@ -3,6 +3,70 @@ import nltk
 from nltk.tokenize import sent_tokenize, word_tokenize, PunktSentenceTokenizer
 from nltk.corpus import stopwords, state_union, abc, movie_reviews, wordnet
 from nltk.stem import PorterStemmer, WordNetLemmatizer
+import random
+
+
+####TEXT CLASSIFICATION
+doc = []
+for category in movie_reviews.categories():
+    for fileid in movie_reviews.fileids(category):
+        doc.append((list(movie_reviews.words(fileid)), category))
+
+random.shuffle(doc)
+
+allWords = []
+for w in movie_reviews.words():
+    allWords.append(w.lower())
+
+
+
+
+allWords = nltk.FreqDist(allWords)
+#print(allWords["couples"])
+# print(list(allWords.values())[0])
+# print(list(allWords.values())[1])
+# print(list(allWords.values())[2])
+# print(list(allWords.values())[3])
+
+wordfeatures = list(allWords.keys())[:3000]
+#print(wordfeatures)
+
+def find_features(docs):
+    words = set(docs)
+    features = {}
+    for f in wordfeatures:
+        features[f] = (f in words)
+
+    return features
+
+#print((find_features(movie_reviews.words('neg\cv000_29416.txt'))))
+
+featuresets = [(find_features(rev), category) for (rev, category) in doc]
+
+train = featuresets[:1900]
+test = featuresets[1900:]
+
+classifier = nltk.NaiveBayesClassifier.train(train)
+print("Naive Bayes Accuracy: ", (nltk.classify.accuracy(classifier, test)))
+classifier.show_most_informative_features(10)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 text = "Hello Mrs. Doe, hope everything is well. I am excited to learn Python. I am nervous about the project."
 stopwrds = set(stopwords.words("english"))
@@ -86,17 +150,17 @@ for syn in wordnet.synsets("good"):
 # print(set(syns))
 # print(set(ants))
 #####WORD SIMILARITY
-w1 = wordnet.synsets("ship")[0]
-w2 = wordnet.synsets("boat")[0]
-print(w1.wup_similarity(w2))
-
-w1 = wordnet.synsets("ship")[0]
-w2 = wordnet.synsets("car")[0]
-print(w1.wup_similarity(w2))
-
-w1 = wordnet.synsets("dog")[0]
-w2 = wordnet.synsets("cat")[0]
-print(w1.wup_similarity(w2))
+# w1 = wordnet.synsets("ship")[0]
+# w2 = wordnet.synsets("boat")[0]
+# print(w1.wup_similarity(w2))
+#
+# w1 = wordnet.synsets("ship")[0]
+# w2 = wordnet.synsets("car")[0]
+# print(w1.wup_similarity(w2))
+#
+# w1 = wordnet.synsets("dog")[0]
+# w2 = wordnet.synsets("cat")[0]
+# print(w1.wup_similarity(w2))
 
 #for w in words:
 #    if w not in stopwrds:
