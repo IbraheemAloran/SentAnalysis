@@ -4,6 +4,7 @@ from nltk.tokenize import sent_tokenize, word_tokenize, PunktSentenceTokenizer
 from nltk.corpus import stopwords, state_union, abc, movie_reviews, wordnet
 from nltk.stem import PorterStemmer, WordNetLemmatizer
 import random
+import pickle
 
 
 ####TEXT CLASSIFICATION
@@ -46,9 +47,21 @@ featuresets = [(find_features(rev), category) for (rev, category) in doc]
 train = featuresets[:1900]
 test = featuresets[1900:]
 
-classifier = nltk.NaiveBayesClassifier.train(train)
+#classifier = nltk.NaiveBayesClassifier.train(train)
+
+model = open("naivebayes.pickle", "rb")
+classifier = pickle.load(model)
+model.close()
+
+
+
 print("Naive Bayes Accuracy: ", (nltk.classify.accuracy(classifier, test)))
 classifier.show_most_informative_features(10)
+
+
+# model = open("naivebayes.pickle", "wb")
+# pickle.dump(classifier, model)
+# model.close()
 
 
 
