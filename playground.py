@@ -47,55 +47,59 @@ class VoteClassifier(ClassifierI):
 #     allWords.append(w.lower())
 
 
-model = open("FeatureSets/doc.pickle", "rb")
-doc = pickle.load(model)
-model.close()
+# model = open("FeatureSets/doc.pickle", "rb")
+# doc = pickle.load(model)
+# model.close()
+#
+# model = open("FeatureSets/allWords.pickle", "rb")
+# allWords = pickle.load(model)
+# model.close()
+#
+# model = open("FeatureSets/wordfeatures.pickle", "rb")
+# wordfeatures = pickle.load(model)
+# model.close()
+#
+# model = open("FeatureSets/featuresets.pickle", "rb")
+# featuresets = pickle.load(model)
+# model.close()
 
-model = open("FeatureSets/allWords.pickle", "rb")
-allWords = pickle.load(model)
-model.close()
+pos = open("movieReviews/positive.txt", "r").read()
+neg = open("movieReviews/negative.txt", "r").read()
 
-model = open("FeatureSets/wordfeatures.pickle", "rb")
-wordfeatures = pickle.load(model)
-model.close()
 
-model = open("FeatureSets/featuresets.pickle", "rb")
-featuresets = pickle.load(model)
-model.close()
+###add each line with label to doc array
+doc = []
 
-# pos = open("movieReviews/positive.txt", "r").read()
-# neg = open("movieReviews/negative.txt", "r").read()
-#
-#
-# ###add each line with label to doc array
-# doc = []
-# for r in pos.split("\n"):
-#     doc.append((r, "pos"))
-#
-# for r in neg.split("\n"):
-#     doc.append((r, "neg"))
-#
-# ###add each word with label to allWords array
-# allWords = []
-# pos_words = word_tokenize(pos)
-# neg_words = word_tokenize(neg)
-#
-# for w in pos_words:
-#     allWords.append(w.lower())
-#
-# for w in neg_words:
-#     allWords.append(w.lower())
-#
-#
-# allWords = nltk.FreqDist(allWords)
-# #print(allWords["couples"])
-# # print(list(allWords.values())[0])
-# # print(list(allWords.values())[1])
-# # print(list(allWords.values())[2])
-# # print(list(allWords.values())[3])
-#
-# wordfeatures = list(allWords.keys())[:5000]
-# #print(wordfeatures)
+keyword  = ["J"]
+for r in pos.split("\n"):
+    doc.append((r, "pos"))
+
+for r in neg.split("\n"):
+    doc.append((r, "neg"))
+
+###add each word with label to allWords array
+allWords = []
+pos_words = nltk.pos_tag(word_tokenize(pos))
+neg_words = nltk.pos_tag(word_tokenize(neg))
+
+for w in pos_words:
+    if w[1][0] in keyword:
+        allWords.append(w[0].lower())
+
+for w in neg_words:
+    if w[1][0] in keyword:
+        allWords.append(w[0].lower())
+
+
+allWords = nltk.FreqDist(allWords)
+#print(allWords["couples"])
+# print(list(allWords.values())[0])
+# print(list(allWords.values())[1])
+# print(list(allWords.values())[2])
+# print(list(allWords.values())[3])
+
+wordfeatures = list(allWords.keys())[:5000]
+#print(wordfeatures)
 
 def find_features(docs):
     # words = set(docs)
@@ -108,8 +112,8 @@ def find_features(docs):
 
 #print((find_features(movie_reviews.words('neg\cv000_29416.txt'))))
 
-# featuresets = [(find_features(rev), category) for (rev, category) in doc]
-# random.shuffle(featuresets)
+featuresets = [(find_features(rev), category) for (rev, category) in doc]
+random.shuffle(featuresets)
 
 #positive dataset
 train = featuresets[:10000]
@@ -173,8 +177,8 @@ model.close()
 
 
 
-print("NLTK Naive Bayes Accuracy: ", (nltk.classify.accuracy(classifier, test)))
-classifier.show_most_informative_features(10)
+#print("NLTK Naive Bayes Accuracy: ", (nltk.classify.accuracy(classifier, test)))
+#classifier.show_most_informative_features(10)
 
 ##SKLEARN CLASSIFIERS
 # mnb = SklearnClassifier(MultinomialNB())
@@ -212,17 +216,17 @@ voter = VoteClassifier(mnb,bnb,lr,sgd,svc,linsvc,nusvc)
 
 
 ###print accuracies for each model
-print("Multinomial Naive Bayes Accuracy: ", (nltk.classify.accuracy(mnb, test)))
-#print("Gaussian Naive Bayes Accuracy: ", (nltk.classify.accuracy(gnb, test)))
-print("Bernoulli Naive Bayes Accuracy: ", (nltk.classify.accuracy(bnb, test)))
-print("Linear Regression Accuracy: ", (nltk.classify.accuracy(lr, test)))
-print("SGD Accuracy: ", (nltk.classify.accuracy(sgd, test)))
-print("SVC Accuracy: ", (nltk.classify.accuracy(svc, test)))
-print("Linear SVC Accuracy: ", (nltk.classify.accuracy(linsvc, test)))
-print("NuSVC Accuracy: ", (nltk.classify.accuracy(nusvc, test)))
-
-
-print("Voter Accuracy: ", (nltk.classify.accuracy(voter, test)))
+# print("Multinomial Naive Bayes Accuracy: ", (nltk.classify.accuracy(mnb, test)))
+# #print("Gaussian Naive Bayes Accuracy: ", (nltk.classify.accuracy(gnb, test)))
+# print("Bernoulli Naive Bayes Accuracy: ", (nltk.classify.accuracy(bnb, test)))
+# print("Linear Regression Accuracy: ", (nltk.classify.accuracy(lr, test)))
+# print("SGD Accuracy: ", (nltk.classify.accuracy(sgd, test)))
+# print("SVC Accuracy: ", (nltk.classify.accuracy(svc, test)))
+# print("Linear SVC Accuracy: ", (nltk.classify.accuracy(linsvc, test)))
+# print("NuSVC Accuracy: ", (nltk.classify.accuracy(nusvc, test)))
+#
+#
+# print("Voter Accuracy: ", (nltk.classify.accuracy(voter, test)))
 # print("Classification: ", voter.classify(test[0][0]), "Confidence: ", voter.confidence(test[0][0]))
 # print("Classification: ", voter.classify(test[1][0]), "Confidence: ", voter.confidence(test[1][0]))
 # print("Classification: ", voter.classify(test[2][0]), "Confidence: ", voter.confidence(test[2][0]))
@@ -270,7 +274,9 @@ print("Voter Accuracy: ", (nltk.classify.accuracy(voter, test)))
 # model.close()
 
 
-
+def sentiment(text):
+    feat = find_features(text)
+    return voter.classify(feat)
 
 
 
