@@ -35,32 +35,71 @@ class VoteClassifier(ClassifierI):
 
 
 ####TEXT CLASSIFICATION
-doc = []
-for category in movie_reviews.categories():
-    for fileid in movie_reviews.fileids(category):
-        doc.append((list(movie_reviews.words(fileid)), category))
-
-random.shuffle(doc)
-
-allWords = []
-for w in movie_reviews.words():
-    allWords.append(w.lower())
-
-
+# doc = []
+# for category in movie_reviews.categories():
+#     for fileid in movie_reviews.fileids(category):
+#         doc.append((list(movie_reviews.words(fileid)), category))
+#
+# #random.shuffle(doc)
+#
+# allWords = []
+# for w in movie_reviews.words():
+#     allWords.append(w.lower())
 
 
-allWords = nltk.FreqDist(allWords)
-#print(allWords["couples"])
-# print(list(allWords.values())[0])
-# print(list(allWords.values())[1])
-# print(list(allWords.values())[2])
-# print(list(allWords.values())[3])
+model = open("FeatureSets/doc.pickle", "rb")
+doc = pickle.load(model)
+model.close()
 
-wordfeatures = list(allWords.keys())[:3000]
-#print(wordfeatures)
+model = open("FeatureSets/allWords.pickle", "rb")
+allWords = pickle.load(model)
+model.close()
+
+model = open("FeatureSets/wordfeatures.pickle", "rb")
+wordfeatures = pickle.load(model)
+model.close()
+
+model = open("FeatureSets/featuresets.pickle", "rb")
+featuresets = pickle.load(model)
+model.close()
+
+# pos = open("movieReviews/positive.txt", "r").read()
+# neg = open("movieReviews/negative.txt", "r").read()
+#
+#
+# ###add each line with label to doc array
+# doc = []
+# for r in pos.split("\n"):
+#     doc.append((r, "pos"))
+#
+# for r in neg.split("\n"):
+#     doc.append((r, "neg"))
+#
+# ###add each word with label to allWords array
+# allWords = []
+# pos_words = word_tokenize(pos)
+# neg_words = word_tokenize(neg)
+#
+# for w in pos_words:
+#     allWords.append(w.lower())
+#
+# for w in neg_words:
+#     allWords.append(w.lower())
+#
+#
+# allWords = nltk.FreqDist(allWords)
+# #print(allWords["couples"])
+# # print(list(allWords.values())[0])
+# # print(list(allWords.values())[1])
+# # print(list(allWords.values())[2])
+# # print(list(allWords.values())[3])
+#
+# wordfeatures = list(allWords.keys())[:5000]
+# #print(wordfeatures)
 
 def find_features(docs):
-    words = set(docs)
+    # words = set(docs)
+    words = word_tokenize(docs)
     features = {}
     for f in wordfeatures:
         features[f] = (f in words)
@@ -69,16 +108,68 @@ def find_features(docs):
 
 #print((find_features(movie_reviews.words('neg\cv000_29416.txt'))))
 
-featuresets = [(find_features(rev), category) for (rev, category) in doc]
+# featuresets = [(find_features(rev), category) for (rev, category) in doc]
+# random.shuffle(featuresets)
 
-train = featuresets[:1900]
-test = featuresets[1900:]
+#positive dataset
+train = featuresets[:10000]
+test = featuresets[10000:]
 
-#classifier = nltk.NaiveBayesClassifier.train(train)
+# #negative dataset
+# train = featuresets[100:]
+# test = featuresets[:100]
 
-model = open("naivebayes.pickle", "rb")
+# model = open("doc.pickle", "wb")
+# pickle.dump(doc, model)
+# model.close()
+#
+# model = open("allWords.pickle", "wb")
+# pickle.dump(allWords, model)
+# model.close()
+#
+# model = open("wordfeatures.pickle", "wb")
+# pickle.dump(wordfeatures, model)
+# model.close()
+#
+# model = open("featuresets.pickle", "wb")
+# pickle.dump(featuresets, model)
+# model.close()
+
+
+# classifier = nltk.NaiveBayesClassifier.train(train)
+
+model = open("Models/naivebayes.pickle", "rb")
 classifier = pickle.load(model)
 model.close()
+
+model = open("Models/mnb.pickle", "rb")
+mnb = pickle.load(model)
+model.close()
+
+model = open("Models/bnb.pickle", "rb")
+bnb = pickle.load(model)
+model.close()
+
+model = open("Models/lr.pickle", "rb")
+lr = pickle.load(model)
+model.close()
+
+model = open("Models/sgd.pickle", "rb")
+sgd = pickle.load(model)
+model.close()
+
+model = open("Models/svc.pickle", "rb")
+svc = pickle.load(model)
+model.close()
+
+model = open("Models/linsvc.pickle", "rb")
+linsvc = pickle.load(model)
+model.close()
+
+model = open("Models/nusvc.pickle", "rb")
+nusvc = pickle.load(model)
+model.close()
+
 
 
 
@@ -86,29 +177,35 @@ print("NLTK Naive Bayes Accuracy: ", (nltk.classify.accuracy(classifier, test)))
 classifier.show_most_informative_features(10)
 
 ##SKLEARN CLASSIFIERS
-mnb = SklearnClassifier(MultinomialNB())
-gnb = SklearnClassifier(GaussianNB())
-bnb = SklearnClassifier(BernoulliNB())
-lr = SklearnClassifier(LogisticRegression())
-sgd = SklearnClassifier(SGDClassifier())
-svc = SklearnClassifier(SVC())
-linsvc = SklearnClassifier(LinearSVC())
-nusvc = SklearnClassifier(NuSVC())
+# mnb = SklearnClassifier(MultinomialNB())
+# gnb = SklearnClassifier(GaussianNB())
+# bnb = SklearnClassifier(BernoulliNB())
+# lr = SklearnClassifier(LogisticRegression())
+# sgd = SklearnClassifier(SGDClassifier())
+# svc = SklearnClassifier(SVC())
+# linsvc = SklearnClassifier(LinearSVC())
+# nusvc = SklearnClassifier(NuSVC())
 
 
 
 
 
 ###Train sklearn classifiers
-mnb.train(train)
-#gnb.train(train)
-bnb.train(train)
-lr.train(train)
-sgd.train(train)
-svc.train(train)
-linsvc.train(train)
-nusvc.train(train)
-
+# mnb.train(train)
+# print("Multinomial Naive Bayes Accuracy: ", (nltk.classify.accuracy(mnb, test)))
+# #gnb.train(train)
+# bnb.train(train)
+# print("Bernoulli Naive Bayes Accuracy: ", (nltk.classify.accuracy(bnb, test)))
+# lr.train(train)
+# print("Linear Regression Accuracy: ", (nltk.classify.accuracy(lr, test)))
+# sgd.train(train)
+# print("SGD Accuracy: ", (nltk.classify.accuracy(sgd, test)))
+# svc.train(train)
+# print("SVC Accuracy: ", (nltk.classify.accuracy(svc, test)))
+# linsvc.train(train)
+# print("Linear SVC Accuracy: ", (nltk.classify.accuracy(linsvc, test)))
+# nusvc.train(train)
+# print("NuSVC Accuracy: ", (nltk.classify.accuracy(nusvc, test)))
 
 ###VOTE CLASSIFIER
 voter = VoteClassifier(mnb,bnb,lr,sgd,svc,linsvc,nusvc)
@@ -126,12 +223,12 @@ print("NuSVC Accuracy: ", (nltk.classify.accuracy(nusvc, test)))
 
 
 print("Voter Accuracy: ", (nltk.classify.accuracy(voter, test)))
-print("Classification: ", voter.classify(test[0][0]), "Confidence: ", voter.confidence(test[0][0]))
-print("Classification: ", voter.classify(test[1][0]), "Confidence: ", voter.confidence(test[1][0]))
-print("Classification: ", voter.classify(test[2][0]), "Confidence: ", voter.confidence(test[2][0]))
-print("Classification: ", voter.classify(test[3][0]), "Confidence: ", voter.confidence(test[3][0]))
-print("Classification: ", voter.classify(test[5][0]), "Confidence: ", voter.confidence(test[5][0]))
-print("Classification: ", voter.classify(test[20][0]), "Confidence: ", voter.confidence(test[20][0]))
+# print("Classification: ", voter.classify(test[0][0]), "Confidence: ", voter.confidence(test[0][0]))
+# print("Classification: ", voter.classify(test[1][0]), "Confidence: ", voter.confidence(test[1][0]))
+# print("Classification: ", voter.classify(test[2][0]), "Confidence: ", voter.confidence(test[2][0]))
+# print("Classification: ", voter.classify(test[3][0]), "Confidence: ", voter.confidence(test[3][0]))
+# print("Classification: ", voter.classify(test[5][0]), "Confidence: ", voter.confidence(test[5][0]))
+# print("Classification: ", voter.classify(test[20][0]), "Confidence: ", voter.confidence(test[20][0]))
 
 
 
@@ -142,6 +239,34 @@ print("Classification: ", voter.classify(test[20][0]), "Confidence: ", voter.con
 
 # model = open("naivebayes.pickle", "wb")
 # pickle.dump(classifier, model)
+# model.close()
+#
+# model = open("mnb.pickle", "wb")
+# pickle.dump(mnb, model)
+# model.close()
+#
+# model = open("bnb.pickle", "wb")
+# pickle.dump(bnb, model)
+# model.close()
+#
+# model = open("lr.pickle", "wb")
+# pickle.dump(lr, model)
+# model.close()
+#
+# model = open("sgd.pickle", "wb")
+# pickle.dump(sgd, model)
+# model.close()
+#
+# model = open("svc.pickle", "wb")
+# pickle.dump(svc, model)
+# model.close()
+#
+# model = open("linsvc.pickle", "wb")
+# pickle.dump(linsvc, model)
+# model.close()
+#
+# model = open("nusvc.pickle", "wb")
+# pickle.dump(nusvc, model)
 # model.close()
 
 
