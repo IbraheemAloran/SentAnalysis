@@ -119,6 +119,8 @@ random.shuffle(featuresets)
 train = featuresets[:10000]
 test = featuresets[10000:]
 
+print(train[0])
+
 # #negative dataset
 # train = featuresets[100:]
 # test = featuresets[:100]
@@ -142,37 +144,37 @@ test = featuresets[10000:]
 
 # classifier = nltk.NaiveBayesClassifier.train(train)
 
-model = open("Models/naivebayes.pickle", "rb")
-classifier = pickle.load(model)
-model.close()
-
-model = open("Models/mnb.pickle", "rb")
-mnb = pickle.load(model)
-model.close()
-
-model = open("Models/bnb.pickle", "rb")
-bnb = pickle.load(model)
-model.close()
-
-model = open("Models/lr.pickle", "rb")
-lr = pickle.load(model)
-model.close()
-
-model = open("Models/sgd.pickle", "rb")
-sgd = pickle.load(model)
-model.close()
-
-model = open("Models/svc.pickle", "rb")
-svc = pickle.load(model)
-model.close()
-
-model = open("Models/linsvc.pickle", "rb")
-linsvc = pickle.load(model)
-model.close()
-
-model = open("Models/nusvc.pickle", "rb")
-nusvc = pickle.load(model)
-model.close()
+# model = open("Models/naivebayes.pickle", "rb")
+# classifier = pickle.load(model)
+# model.close()
+#
+# model = open("Models/mnb.pickle", "rb")
+# mnb = pickle.load(model)
+# model.close()
+#
+# model = open("Models/bnb.pickle", "rb")
+# bnb = pickle.load(model)
+# model.close()
+#
+# model = open("Models/lr.pickle", "rb")
+# lr = pickle.load(model)
+# model.close()
+#
+# model = open("Models/sgd.pickle", "rb")
+# sgd = pickle.load(model)
+# model.close()
+#
+# model = open("Models/svc.pickle", "rb")
+# svc = pickle.load(model)
+# model.close()
+#
+# model = open("Models/linsvc.pickle", "rb")
+# linsvc = pickle.load(model)
+# model.close()
+#
+# model = open("Models/nusvc.pickle", "rb")
+# nusvc = pickle.load(model)
+# model.close()
 
 
 
@@ -212,7 +214,7 @@ model.close()
 # print("NuSVC Accuracy: ", (nltk.classify.accuracy(nusvc, test)))
 
 ###VOTE CLASSIFIER
-voter = VoteClassifier(mnb,bnb,lr,sgd,svc,linsvc,nusvc)
+#voter = VoteClassifier(mnb,bnb,lr,sgd,svc,linsvc,nusvc)
 
 
 ###print accuracies for each model
