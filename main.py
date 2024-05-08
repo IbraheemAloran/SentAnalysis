@@ -1,11 +1,15 @@
 import nltk
 
 import sentiment_mod as sent
+import amazon_sent_mod as amsent
 import pandas as pd
 from nltk.classify import ClassifierI
 from nltk.tokenize import sent_tokenize, word_tokenize, PunktSentenceTokenizer
 
-dataset = pd.read_csv("Datasets/amazon.csv", nrows=100)
+education = pd.read_csv("Datasets/Education.csv")
+finance = pd.read_csv("Datasets/Finance.csv")
+politics = pd.read_csv("Datasets/Politics.csv")
+sports = pd.read_csv("Datasets/Sports.csv")
 
 
 # print(dataset["Text"][98])
@@ -35,16 +39,19 @@ def evaluateSentMod(sent_mod, data):
     # print(data["label"][0])
     #print(sent_mod.sentiment(data["Text"][0])[0] )
     for i in range(len(data)):
-        if sent_mod.sentiment(data["Text"][i])[0] == 'pos' and data["label"][i] == 1:
+        if sent_mod.sentiment(data["Text"][i])[0] == 'pos' and data["Label"][i] == "positive":
             counter = counter + 1
-        elif sent_mod.sentiment(data["Text"][i])[0] == 'neg' and data["label"][i] == 0:
+        elif sent_mod.sentiment(data["Text"][i])[0] == 'neg' and data["Label"][i] == "negative":
             counter = counter + 1
         #print(data["label"][i])
 
     return counter/len(data)
 
 
-#print(evaluateSentMod(sent, dataset))
+print("Education Accuracy: ", evaluateSentMod(amsent, education))
+print("Finance Accuracy: ", evaluateSentMod(amsent, finance))
+print("Politics Accuracy: ", evaluateSentMod(amsent, politics))
+print("Sports Accuracy: ", evaluateSentMod(amsent, sports))
 
-#print(nltk.classify.accuracy(sent, ))
+
 

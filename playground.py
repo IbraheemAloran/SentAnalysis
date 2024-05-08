@@ -99,7 +99,7 @@ allWords = nltk.FreqDist(allWords)
 # print(list(allWords.values())[3])
 
 wordfeatures = list(allWords.keys())[:5000]
-#print(wordfeatures)
+print(wordfeatures)
 
 def find_features(docs):
     # words = set(docs)
@@ -114,12 +114,14 @@ def find_features(docs):
 
 featuresets = [(find_features(rev), category) for (rev, category) in doc]
 random.shuffle(featuresets)
+print(featuresets[0])
+print(featuresets[1])
 
 #positive dataset
 train = featuresets[:10000]
 test = featuresets[10000:]
 
-print(train[0])
+
 
 # #negative dataset
 # train = featuresets[100:]

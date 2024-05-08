@@ -109,7 +109,7 @@ lr = SklearnClassifier(LogisticRegression())
 sgd = SklearnClassifier(SGDClassifier())
 svc = SklearnClassifier(SVC())
 linsvc = SklearnClassifier(LinearSVC())
-nusvc = SklearnClassifier(NuSVC())
+#nusvc = SklearnClassifier(NuSVC(nu=0.3))
 
 ###Train sklearn classifiers
 mnb.train(train)
@@ -125,11 +125,11 @@ svc.train(train)
 print("SVC Accuracy: ", (nltk.classify.accuracy(svc, test)))
 linsvc.train(train)
 print("Linear SVC Accuracy: ", (nltk.classify.accuracy(linsvc, test)))
-nusvc.train(train)
-print("NuSVC Accuracy: ", (nltk.classify.accuracy(nusvc, test)))
+#nusvc.train(train)
+#print("NuSVC Accuracy: ", (nltk.classify.accuracy(nusvc, test)))
 
 ###VOTE CLASSIFIER
-voter = VoteClassifier(mnb,bnb,lr,sgd,svc,linsvc,nusvc)
+voter = VoteClassifier(mnb,bnb,lr,sgd,svc,linsvc)
 print("Voter Accuracy: ", (nltk.classify.accuracy(voter, test)))
 
 
@@ -161,6 +161,6 @@ model = open("AmazonModels/linsvc.pickle", "wb")
 pickle.dump(linsvc, model)
 model.close()
 
-model = open("AmazonModels/nusvc.pickle", "wb")
-pickle.dump(nusvc, model)
-model.close()
+# model = open("AmazonModels/nusvc.pickle", "wb")
+# pickle.dump(nusvc, model)
+# model.close()
