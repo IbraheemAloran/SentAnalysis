@@ -59,9 +59,6 @@ def find_features(docs):
 
     return features
 
-train = featuresets[:10000]
-test = featuresets[10000:]
-
 
 model = open("Models/naivebayes.pickle", "rb")
 classifier = pickle.load(model)

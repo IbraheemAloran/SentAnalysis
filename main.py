@@ -3,8 +3,11 @@ import nltk
 import sentiment_mod as sent
 import pandas as pd
 from nltk.classify import ClassifierI
+from nltk.tokenize import sent_tokenize, word_tokenize, PunktSentenceTokenizer
 
 dataset = pd.read_csv("Datasets/amazon.csv", nrows=100)
+
+
 # print(dataset["Text"][98])
 # print(dataset["label"][98])
 #
@@ -41,7 +44,7 @@ def evaluateSentMod(sent_mod, data):
     return counter/len(data)
 
 
-print(evaluateSentMod(sent, dataset))
+#print(evaluateSentMod(sent, dataset))
 
 #print(nltk.classify.accuracy(sent, ))
 
